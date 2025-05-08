@@ -1,0 +1,25 @@
+import cv2
+
+img = cv2.imread("C:/Users/cheth/OneDrive/Pictures/Screenshots/Screenshot (21).png")
+if img is None:
+    raise ValueError("Image not found!")
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+sobel_x = cv2.convertScaleAbs(cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3))
+sobel_y = cv2.convertScaleAbs(cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3))
+sobel_combined = cv2.addWeighted(sobel_x, 0.5, sobel_y, 0.5, 0)
+
+
+wm = img.copy()
+overlay = wm.copy()
+cv2.putText(overlay, "© YourName", (img.shape[1]-200, img.shape[0]-20),
+            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+cv2.addWeighted(overlay, 0.4, wm, 0.6, 0, wm)
+
+cv2.imshow("Watermarked Image", wm)
+cv2.imshow("Sobel Combined", sobel_combined)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+cv2.imwrite("watermarked_image.jpg", wm)
+cv2.imwrite("sobel_combined.jpg", sobel_combined)
