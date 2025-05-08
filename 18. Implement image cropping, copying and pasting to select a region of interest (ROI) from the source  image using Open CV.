@@ -1,0 +1,27 @@
+import cv2
+import numpy as np
+
+image = cv2.imread("C:/Users/cheth/OneDrive/Pictures/Screenshots/Screenshot (21).png")
+if image is None:
+    raise ValueError("Image not found. Please check the path.")
+
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+sobel_x = cv2.convertScaleAbs(cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3))
+sobel_y = cv2.convertScaleAbs(cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3))
+sobel_combined = cv2.addWeighted(sobel_x, 0.5, sobel_y, 0.5, 0)
+
+x1, y1 = 100, 100
+x2, y2 = 200, 200
+
+roi = image[y1:y2, x1:x2]  
+
+image[300:300 + roi.shape[0], 300:300 + roi.shape[1]] = roi
+
+cv2.imshow("Original with ROI Pasted", image)
+cv2.imshow("Sobel Combined", sobel_combined)
+
+cv2.imwrite("sobel_combined.jpg", sobel_combined)
+cv2.imwrite("roi_pasted.jpg", image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
